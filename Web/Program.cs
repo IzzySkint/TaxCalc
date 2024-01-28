@@ -1,7 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using TaxCalc.Data.Context;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddDbContext<TaxCalcDbContext>(options =>
+       options.UseSqlServer(builder.Configuration.GetConnectionString("TaxCalcDbConnectionString")));
 
 var app = builder.Build();
 

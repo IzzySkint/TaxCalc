@@ -14,7 +14,7 @@ public class FlatRateCalculator : ITaxCalculator
     
     public decimal Calculate(decimal annualIncome)
     {
-        var entry = _taxTable.Entries.Where(x => annualIncome > x.From && annualIncome <= x.To)
+        var entry = _taxTable.Entries.Where(x => annualIncome >= x.From && annualIncome <= x.To)
             .Select(x => x)
             .FirstOrDefault();
 

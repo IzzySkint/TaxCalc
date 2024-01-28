@@ -6,7 +6,7 @@ namespace TaxCalc.Data.Context;
 
 public class TaxCalcDbContext : DbContext
 {
-    public TaxCalcDbContext(string connectionString) : base(new DbContextOptionsBuilder<TaxCalcDbContext>().UseSqlServer(connectionString).Options)
+    public TaxCalcDbContext(DbContextOptions options) : base(options)
     {
     }
     

@@ -28,8 +28,8 @@ public class ProgressiveCalculator : ITaxCalculator
         }
 
         decimal tax = 0;
-        
-        for (int i = 0; i < thresholds.Length - 1; i++)
+
+        for (int i = 0; i < thresholds.Length; i++)
         {
             if (annualIncome <= thresholds[i])
             {
@@ -38,8 +38,8 @@ public class ProgressiveCalculator : ITaxCalculator
             }
             else
             {
-                tax += (thresholds[i + 1] - thresholds[i]) * rates[i];
-                annualIncome -= (thresholds[i + 1] - thresholds[i]);
+                tax += (thresholds[i] - (i == 0 ? 0 : thresholds[i - 1])) * rates[i];
+                annualIncome -= (thresholds[i] - (i == 0 ? 0 : thresholds[i - 1]));
             }
         }
 
