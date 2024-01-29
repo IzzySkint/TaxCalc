@@ -5,17 +5,29 @@ using TaxCalc.Core.Models;
 using TaxCalc.Data.Contracts;
 using TaxCalc.Data.Entities;
 using PostalCode = TaxCalc.Data.Entities.PostalCode;
+using Microsoft.Extensions.Logging;
 
 namespace TaxCalc.Core.Services;
 
-public class CalculationService(IUnitOfWork unitOfWork, IMapper mapper) : ICalculationService
+public class CalculationService(ILogger<CalculationService> logger, IUnitOfWork unitOfWork, IMapper mapper) : ICalculationService
 {
     public async Task SaveCalculationAsync(Calculation calculation)
     {
-        var taxCalculation = mapper.Map<TaxCalculation>(calculation);
+        logger.LogInformation($"SaveCalculationAsync with calculation, AnnualIncome: {calculation.AnnualIncome} PostalCodeId: {calculation.PostalCodeId} Result: {calculation.Result}");
+
+        try
+        {
+            var taxCalculation = mapper.Map<TaxCalculation>(calculation);
+
+            await unitOfWork.TaxCalculations.AddAsync(taxCalculation);
+            await unitOfWork.CompleteAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
         
-        await unitOfWork.TaxCalculations.AddAsync(taxCalculation);
-        await unitOfWork.CompleteAsync();
     }
 
     public async Task<TaxCalculationTypes> GetCalculationTypeFromPostalCodeAsync(string postalCode)

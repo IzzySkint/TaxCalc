@@ -7,6 +7,7 @@ using TaxCalc.Data.Contracts;
 using TaxCalc.Data.Repositories;
 using TaxCalc.TaxCalculator.Calculators;
 using TaxCalc.TaxCalculator.Contracts;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,10 @@ builder.Services.AddScoped<ICalculationService, CalculationService>();
 builder.Services.AddScoped<ICalculatorService, CalculatorService>();
 builder.Services.AddScoped<ITaxCalculatorFactory, TaxCalculatorFactory>();
 builder.Services.AddScoped<TaxTableConverter>();
+
+builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
+    .ReadFrom.Configuration(hostingContext.Configuration)
+    .Enrich.FromLogContext());
 
 var app = builder.Build();
 

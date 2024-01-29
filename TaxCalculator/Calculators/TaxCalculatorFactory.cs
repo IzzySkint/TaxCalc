@@ -1,21 +1,28 @@
 using TaxCalc.Core.Contracts;
 using TaxCalc.Core.Enums;
 using TaxCalc.TaxCalculator.Contracts;
+using Microsoft.Extensions.Logging;
+using TaxCalc.Core.Models;
 
 namespace TaxCalc.TaxCalculator.Calculators;
 
-public class TaxCalculatorFactory : ITaxCalculatorFactory
+public class TaxCalculatorFactory(ILogger<TaxCalculatorFactory> logger, ICalculatorService calculatorService) : ITaxCalculatorFactory
 {
-    private readonly ICalculatorService _calculatorService;
-    
-    public TaxCalculatorFactory(ICalculatorService calculatorService)
-    {
-        _calculatorService = calculatorService;
-    }
-
     public async Task<ITaxCalculator> CreateAsync(TaxCalculationTypes calculationType)
     {
-        var taxTable = await _calculatorService.GetTaxTableAsync(calculationType);
+        TaxTable? taxTable = null;
+
+        try
+        {
+            logger.LogInformation($"CreateAsync with calculationType: {calculationType}");
+            taxTable = await calculatorService.GetTaxTableAsync(calculationType);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"Error getting tax table for calculation type {calculationType}");
+            throw;
+        }
+
         return calculationType switch
         {
             TaxCalculationTypes.FlatValue => new FlatValueCalculator(taxTable),
