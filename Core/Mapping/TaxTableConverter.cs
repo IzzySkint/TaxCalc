@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using AutoMapper;
 using TaxCalc.Core.Enums;
 using TaxCalc.Core.Models;
@@ -5,21 +6,24 @@ using TaxCalc.Data.Entities;
 
 namespace TaxCalc.Core.Mapping;
 
-public class TaxTableConverter : ITypeConverter<IEnumerable<Tax>, TaxTable>
+public class TaxTableConverter : ITypeConverter<List<Tax>, TaxTable>
 {
-    public TaxTable Convert(IEnumerable<Tax> source, TaxTable destination, ResolutionContext context)
+    public TaxTable Convert(List<Tax> source, TaxTable destination, ResolutionContext context)
     {
-        var taxTable = new TaxTable();
+        TaxTable taxTable = new TaxTable();
+
         foreach (var tax in source)
         {
-            taxTable.Entries.Add(new TaxTable.Entry
+            var entry = new TaxTable.Entry
             {
                 From = tax.From,
                 To = tax.To,
                 Rate = tax.Rate,
                 Value = tax.Value,
-                CalculationType = (TaxCalculationTypes) tax.TaxCalculationTypeId
-            });
+                CalculationType = (TaxCalculationTypes)tax.TaxCalculationTypeId
+            };
+
+            taxTable.Entries.Add(entry);
         }
 
         return taxTable;

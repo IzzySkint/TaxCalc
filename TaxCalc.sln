@@ -1,14 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxCalculator", "TaxCalculator\TaxCalculator.csproj", "{D2BB78F3-E5F0-4312-AE0B-5BF72C1902EA}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxCalculator", "TaxCalculator\TaxCalculator.csproj", "{D2BB78F3-E5F0-4312-AE0B-5BF72C1902EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{638DBDA1-DA07-43D5-B2F5-A932F836DBA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{638DBDA1-DA07-43D5-B2F5-A932F836DBA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{22ACE16E-7B2D-43C1-9326-6B06C3EAB0BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{22ACE16E-7B2D-43C1-9326-6B06C3EAB0BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxCalculator.Tests", "TaxCalculator.Tests\TaxCalculator.Tests.csproj", "{E7A51DB9-CE10-4236-9666-9F9E763EF4EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxCalculator.Tests", "TaxCalculator.Tests\TaxCalculator.Tests.csproj", "{E7A51DB9-CE10-4236-9666-9F9E763EF4EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{B4D7745A-2503-4039-8F00-9AF019D36F50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "Web\Web.csproj", "{B4D7745A-2503-4039-8F00-9AF019D36F50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +39,8 @@ Global
 		{B4D7745A-2503-4039-8F00-9AF019D36F50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4D7745A-2503-4039-8F00-9AF019D36F50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4D7745A-2503-4039-8F00-9AF019D36F50}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

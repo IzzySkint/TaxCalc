@@ -12,7 +12,6 @@ public class CoreProfile : Profile
     {
         CreateMap<Calculation, TaxCalculation>();
         CreateMap<Data.Entities.PostalCode, Models.PostalCode>();
-        CreateMap<IEnumerable<Tax>, TaxTable>()
-            .ConvertUsing<TaxTableConverter>();
+        CreateMap<List<Tax>, TaxTable>().ConvertUsing(typeof(TaxTableConverter));
     }
 }

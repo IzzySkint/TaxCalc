@@ -11,8 +11,10 @@ public class CalculatorService(IUnitOfWork unitOfWork, IMapper mapper) : ICalcul
     public async Task<TaxTable> GetTaxTableAsync(TaxCalculationTypes calculationType)
     {
         var taxes = await unitOfWork.Taxes.FindAsync(x => x.TaxCalculationTypeId == (int)calculationType);
+
         var taxTable = mapper.Map<TaxTable>(taxes);
 
         return taxTable;
+
     }
 }

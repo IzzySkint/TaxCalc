@@ -20,7 +20,7 @@ public class CalculationService(IUnitOfWork unitOfWork, IMapper mapper) : ICalcu
 
     public async Task<TaxCalculationTypes> GetCalculationTypeFromPostalCodeAsync(string postalCode)
     {
-        PostalCode postalCodeEntity = await unitOfWork.PostalCodes.GetByPostalCodeAsync(postalCode);
+        PostalCode? postalCodeEntity = await unitOfWork.PostalCodes.GetByPostalCodeAsync(postalCode);
         
         if (postalCodeEntity == null)
         {
@@ -28,6 +28,18 @@ public class CalculationService(IUnitOfWork unitOfWork, IMapper mapper) : ICalcu
         }
         
         return (TaxCalculationTypes) postalCodeEntity.TaxCalculationTypeId;
+    }
+
+    public async Task<TaxCalculationTypes> GetCalculationTypeFromPostalCodeIdAsync(int id)
+    {
+        PostalCode? postalCodeEntity = await unitOfWork.PostalCodes.GetByIdAsync(id);
+
+        if (postalCodeEntity == null)
+        {
+            return TaxCalculationTypes.Unknown;
+        }
+
+        return (TaxCalculationTypes) (postalCodeEntity.TaxCalculationTypeId);
     }
 
     public async Task<IEnumerable<Models.PostalCode>> GetAllPostalCodesAsync()

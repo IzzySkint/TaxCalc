@@ -1,0 +1,72 @@
+﻿@page
+@model TaxCalc.Web.Pages.CalculatorModel
+@{
+}
+
+<div class="container m-2">
+    <h1 class="p-2 bg-dark bg-opacity-10">Tax Calculator</h1>
+    <div class="row">
+        <div class="col-4">
+            <div class="mb-3">
+                <label for="postalCodes" class="form-label">Postal Code</label>
+                <select class="form-select" id="postalCodes" asp-items="Model.PostalCodes" required="required"></select>
+            </div>
+            <div class="mb-3">
+                <label for="incomeAmount" class="form-label">Annual Income Amount</label>
+                <input type="number" class="form-control" id="incomeAmount" max="3000000" min="1" placeholder="1000" required="required"/>
+            </div>
+            <div id="calculatingDiv" class="mb-3" style="display:none">
+                <img id="calculatingImg"  src="images/calculating.gif" height="200" width="200" />
+            </div>
+            <div id="resultsDiv" class="mb-3" style="display:none">
+                <label for="taxResult" class="form-label">Tax Amount</label>
+                <input id="taxResult" class="form-control" type ="text" disabled="disabled"/>
+            </div>
+            
+            <div class="mb-3">
+                <button id="calculate" type="button" class="btn btn-primary">Calculate</button>
+                <button id="reset" type="button" class="btn btn-dark">Reset</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(function () {
+            $('#calculate').click(function () {
+                debugger;
+                $('#calculatingDiv').show();
+
+                var calculationRequest = { postalCodeId: $('#postalCodes').val(), annualIncome: $('#incomeAmount').val() };
+                var json = JSON.stringify(calculationRequest);
+
+                var incomeAmount = $('#incomeAmount').val();
+                $.ajax({
+                    url: '/api/calculations/calculate',
+                    type: 'POST',
+                    data: json,
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (data) {
+                        
+                        $('#taxResult').val(data.taxResult);
+                        $('#calculatingDiv').hide();
+                        $('#resultsDiv').show();
+
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            $('#reset').click(function () {
+                $('#postalCodes').val('');
+                $('#incomeAmount').val('');
+                $('#taxResult').val('');
+                $('#resultsDiv').hide();
+            });
+        });
+    </script>
+}
+```
