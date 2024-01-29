@@ -15,6 +15,11 @@ public class ProgressiveCalculator : ITaxCalculator
     
     public decimal Calculate(decimal annualIncome)
     {
+        if (annualIncome <= 0)
+        {
+            throw new CalculationException($"Annual income must be greater than 0 ({annualIncome})");
+        }
+
         decimal[] thresholds = _taxTable.Entries.Select(x => x.To).ToArray();
         decimal[] rates = _taxTable.Entries.Select(x => x.Rate).ToArray();
         

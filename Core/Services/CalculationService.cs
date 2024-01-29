@@ -22,9 +22,9 @@ public class CalculationService(ILogger<CalculationService> logger, IUnitOfWork 
             await unitOfWork.TaxCalculations.AddAsync(taxCalculation);
             await unitOfWork.CompleteAsync();
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e);
+            logger.LogError(ex, $"Error saving calculation, AnnualIncome: {calculation.AnnualIncome} PostalCodeId: {calculation.PostalCodeId} Result: {calculation.Result}");
             throw;
         }
         
@@ -32,32 +32,62 @@ public class CalculationService(ILogger<CalculationService> logger, IUnitOfWork 
 
     public async Task<TaxCalculationTypes> GetCalculationTypeFromPostalCodeAsync(string postalCode)
     {
-        PostalCode? postalCodeEntity = await unitOfWork.PostalCodes.GetByPostalCodeAsync(postalCode);
-        
-        if (postalCodeEntity == null)
+        try
         {
-            return TaxCalculationTypes.Unknown;
+            logger.LogDebug($"Retrieving calculation type by postal code. Postal code: {postalCode}");
+            PostalCode? postalCodeEntity = await unitOfWork.PostalCodes.GetByPostalCodeAsync(postalCode);
+
+            if (postalCodeEntity == null)
+            {
+                return TaxCalculationTypes.Unknown;
+            }
+
+            return (TaxCalculationTypes)postalCodeEntity.TaxCalculationTypeId;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"Error retrieving calculation type by postal code. Postal code: {postalCode}");
+            throw;
         }
         
-        return (TaxCalculationTypes) postalCodeEntity.TaxCalculationTypeId;
     }
 
     public async Task<TaxCalculationTypes> GetCalculationTypeFromPostalCodeIdAsync(int id)
     {
-        PostalCode? postalCodeEntity = await unitOfWork.PostalCodes.GetByIdAsync(id);
-
-        if (postalCodeEntity == null)
+        try
         {
-            return TaxCalculationTypes.Unknown;
-        }
+            logger.LogDebug($"Retrieving calculation type by postal code id. Postal code id: {id}");
+            PostalCode? postalCodeEntity = await unitOfWork.PostalCodes.GetByIdAsync(id);
 
-        return (TaxCalculationTypes) (postalCodeEntity.TaxCalculationTypeId);
+            if (postalCodeEntity == null)
+            {
+                return TaxCalculationTypes.Unknown;
+            }
+
+            return (TaxCalculationTypes)(postalCodeEntity.TaxCalculationTypeId);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"Error retrieving calculation type by postal code id. Postal code id: {id}");
+            throw;
+        }
+        
     }
 
     public async Task<IEnumerable<Models.PostalCode>> GetAllPostalCodesAsync()
     {
-        var postalCodes = await unitOfWork.PostalCodes.GetAllAsync();
+        try
+        {
+            logger.LogDebug("Retrieving all postal codes");
+            var postalCodes = await unitOfWork.PostalCodes.GetAllAsync();
+
+            return mapper.Map<IEnumerable<Models.PostalCode>>(postalCodes);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving all postal codes");
+            throw;
+        }
         
-        return mapper.Map<IEnumerable<Models.PostalCode>>(postalCodes);
     }
 }

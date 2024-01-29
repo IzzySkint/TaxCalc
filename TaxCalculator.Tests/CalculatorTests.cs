@@ -2,6 +2,7 @@ using NUnit.Framework;
 using TaxCalc.Core.Enums;
 using TaxCalc.Core.Services;
 using TaxCalc.TaxCalculator.Calculators;
+using TaxCalc.TaxCalculator.Exceptions;
 using TaxCalc.TaxCalculator.Tests.Mocks;
 
 namespace TaxCalc.TaxCalculator.Tests;
@@ -13,7 +14,14 @@ public class CalculatorTests
     
     public CalculatorTests()
     {
-        _factory = new TaxCalculatorFactory(new CalculatorServiceMock());
+        _factory = new TaxCalculatorFactory(new TaxCalculatorFactoryLogger(), new CalculatorServiceMock());
+    }
+
+    [Test]
+    public async Task FlatValueTaxCalculationTest_Income_0()
+    {
+        var calculator = await _factory.CreateAsync(TaxCalculationTypes.FlatValue);
+        Assert.Throws<CalculationException>(() => calculator.Calculate(0));
     }
 
     [Test]
@@ -34,6 +42,13 @@ public class CalculatorTests
         var result = calculator.Calculate(200000);
 
         Assert.AreEqual(expected, result);
+    }
+
+    [Test]
+    public async Task FlatRateTaxCalculationTest_Income_0()
+    {
+        var calculator = await _factory.CreateAsync(TaxCalculationTypes.FlatRate);
+        Assert.Throws<CalculationException>(() => calculator.Calculate(0));
     }
 
     [Test]
@@ -59,6 +74,13 @@ public class CalculatorTests
     }
 
     [Test]
+    public async Task ProgressiveTaxCalculationTest_Income_0()
+    {
+        var calculator = await _factory.CreateAsync(TaxCalculationTypes.Progressive);
+        Assert.Throws<CalculationException>(() => calculator.Calculate(0));
+    }
+
+    [Test]
     public async Task ProgressiveTaxCalculationTest_Income_100000()
     {
         var expected = CalculateProgressiveTax(100000);
@@ -76,6 +98,28 @@ public class CalculatorTests
 
         var calculator = await _factory.CreateAsync(TaxCalculationTypes.Progressive);
         var result = calculator.Calculate(200000);
+
+        Assert.AreEqual(expected, result);
+    }
+
+    [Test]
+    public async Task ProgressiveTaxCalculationTest_Income_1000000()
+    {
+        var expected = CalculateProgressiveTax(1000000);
+
+        var calculator = await _factory.CreateAsync(TaxCalculationTypes.Progressive);
+        var result = calculator.Calculate(1000000);
+
+        Assert.AreEqual(expected, result);
+    }
+
+    [Test]
+    public async Task ProgressiveTaxCalculationTest_Income_1300000()
+    {
+        var expected = CalculateProgressiveTax(1300000);
+
+        var calculator = await _factory.CreateAsync(TaxCalculationTypes.Progressive);
+        var result = calculator.Calculate(1300000);
 
         Assert.AreEqual(expected, result);
     }

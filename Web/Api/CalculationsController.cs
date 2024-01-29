@@ -9,11 +9,9 @@ namespace TaxCalc.Web.Api
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CalculationsController(ICalculationService calculationService, ITaxCalculatorFactory calculatorFactory)
+    public class CalculationsController(ILogger<CalculationsController> logger, ICalculationService calculationService, ITaxCalculatorFactory calculatorFactory)
         : Controller
     {
-        private readonly ICalculationService _calculationService = calculationService;
-        private readonly ITaxCalculatorFactory _calculatorFactory = calculatorFactory;
 
         [HttpPost]
         [Route("calculate")]
@@ -29,31 +27,39 @@ namespace TaxCalc.Web.Api
                 return BadRequest("Annual income is required");
             }
 
-            var calculationType = await _calculationService.GetCalculationTypeFromPostalCodeIdAsync(request.PostalCodeId);
-
-            if (calculationType == TaxCalculationTypes.Unknown)
+            try
             {
-                return BadRequest($"Postal code {request.PostalCodeId} is not supported");
+                var calculationType = await calculationService.GetCalculationTypeFromPostalCodeIdAsync(request.PostalCodeId);
+
+                if (calculationType == TaxCalculationTypes.Unknown)
+                {
+                    return BadRequest($"Postal code {request.PostalCodeId} is not supported");
+                }
+
+                var calculator = await calculatorFactory.CreateAsync(calculationType);
+                var result = calculator.Calculate(request.AnnualIncome);
+
+                var calculation = new Calculation
+                {
+                    AnnualIncome = request.AnnualIncome,
+                    PostalCodeId = request.PostalCodeId,
+                    Result = result
+                };
+
+                await calculationService.SaveCalculationAsync(calculation);
+
+                var response = new CalculationResponse
+                {
+                    TaxResult = result.ToString("#.##")
+                };
+
+                return Json(response);
             }
-
-            var calculator = await _calculatorFactory.CreateAsync(calculationType);
-            var result = calculator.Calculate(request.AnnualIncome);
-
-            var calculation = new Calculation
+            catch (Exception ex)
             {
-                AnnualIncome = request.AnnualIncome,
-                PostalCodeId = request.PostalCodeId,
-                Result = result
-            };
-
-            await _calculationService.SaveCalculationAsync(calculation);
-
-            var response = new CalculationResponse
-            {
-                TaxResult = result.ToString("#.##")
-            };
-
-            return Json(response);
+                logger.LogError(ex, $"Error calculating tax, with annualIncome: {request.AnnualIncome}, postal code id: {request.PostalCodeId}");
+                return StatusCode(500, "Error calculating tax");
+            }
         }
     }
 }

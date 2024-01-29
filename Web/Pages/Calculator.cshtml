@@ -7,34 +7,60 @@
     <h1 class="p-2 bg-dark bg-opacity-10">Tax Calculator</h1>
     <div class="row">
         <div class="col-4">
-            <div class="mb-3">
-                <label for="postalCodes" class="form-label">Postal Code</label>
-                <select class="form-select" id="postalCodes" asp-items="Model.PostalCodes" required="required"></select>
-            </div>
-            <div class="mb-3">
-                <label for="incomeAmount" class="form-label">Annual Income Amount</label>
-                <input type="number" class="form-control" id="incomeAmount" max="3000000" min="1" placeholder="1000" required="required"/>
-            </div>
-            <div id="calculatingDiv" class="mb-3" style="display:none">
-                <img id="calculatingImg"  src="images/calculating.gif" height="200" width="200" />
-            </div>
-            <div id="resultsDiv" class="mb-3" style="display:none">
-                <label for="taxResult" class="form-label">Tax Amount</label>
-                <input id="taxResult" class="form-control" type ="text" disabled="disabled"/>
-            </div>
-            
-            <div class="mb-3">
-                <button id="calculate" type="button" class="btn btn-primary">Calculate</button>
-                <button id="reset" type="button" class="btn btn-dark">Reset</button>
-            </div>
+            <form id="calculatorForm">
+                <div class="mb-3">
+                    <label for="postalCodes" class="form-label">Postal Code</label>
+                    <select class="form-select" id="postalCodes" name="postalCodes" asp-items="Model.PostalCodes" required="required"></select>
+                </div>
+                <div class="mb-3">
+                    <label for="incomeAmount" class="form-label">Annual Income Amount</label>
+                    <input type="number" class="form-control" id="incomeAmount" name="incomeAmount"  min="1" max="3000000" required="required" placeholder="10000"/>
+                </div>
+                <div id="calculatingDiv" class="mb-3" style="display:none">
+                    <img id="calculatingImg" src="images/calculating.gif" height="200" width="200"/>
+                </div>
+                <div id="resultsDiv" class="mb-3" style="display:none">
+                    <label for="taxResult" class="form-label">Tax Amount</label>
+                    <input id="taxResult" class="form-control" type="text" disabled="disabled"/>
+                </div>
+
+                <div class="mb-3">
+                    <button id="calculate" type="button" class="btn btn-primary">Calculate</button>
+                    <button id="reset" type="button" class="btn btn-dark">Reset</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
-        $(function () {
+        $().ready(function () {
+            $('#calculatorForm').validate({
+                rules: {
+                    incomeAmount: {
+                        required: true,
+                        min: 1,
+                        max: 3000000
+                    }
+                },
+                messages: {
+                    incomeAmount: {
+                        required: "Please enter an income amount",
+                        min: "Please enter a value greater than 0",
+                        max: "Please enter a value less than 3000000"
+                    }
+                }
+            });
+
             $('#calculate').click(function () {
-                debugger;
+
+                let isValid = $('#calculatorForm').valid();
+
+                if (!isValid) {
+                    return;
+                }
+
                 $('#calculatingDiv').show();
 
                 var calculationRequest = { postalCodeId: $('#postalCodes').val(), annualIncome: $('#incomeAmount').val() };
@@ -69,4 +95,3 @@
         });
     </script>
 }
-```

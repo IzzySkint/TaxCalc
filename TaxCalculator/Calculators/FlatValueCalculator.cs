@@ -15,6 +15,11 @@ public class FlatValueCalculator : ITaxCalculator
     
     public decimal Calculate(decimal annualIncome)
     {
+        if (annualIncome <= 0)
+        {
+            throw new CalculationException($"Annual income must be greater than 0 ({annualIncome})");
+        }
+
         var entry = _taxTable.Entries.Where(x => annualIncome >= x.From && annualIncome <= x.To)
             .Select(x => x)
             .FirstOrDefault();
